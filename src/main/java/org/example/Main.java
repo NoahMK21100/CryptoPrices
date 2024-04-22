@@ -2,6 +2,7 @@ package org.example;
 
 import org.example.model.CoinData;
 
+import java.text.DecimalFormat;
 import java.util.Locale;
 import java.util.Scanner;
 
@@ -18,7 +19,11 @@ public class Main {
     // Controls app run state
     private static boolean isAppRunning = true;
     private static final CryptoAPI cryptoApi = new CryptoAPI();
+    // DecimalFormat for market cap and volume formatting
+    private static final DecimalFormat PRICE_FORMAT = new DecimalFormat("$#,##0.00");
 
+    // DecimalFormat for percentage formatting
+    private static final DecimalFormat PERCENT_FORMAT = new DecimalFormat("#0.00'%'");
     public static void main(String[] args) {
 
         try {
@@ -66,9 +71,13 @@ public class Main {
             System.out.println("Symbol: " + coinData.getSymbol());
             System.out.println("Price: " + coinData.getPriceUsd());
             System.out.println("Rank: #" + coinData.getRank());
-            System.out.println("Market Cap (USD): " + coinData.getMarketCapUsd());
-            System.out.println("Volume USD 24Hr: " + coinData.getVolumeUsd24Hr());
-            System.out.println("Changed Percent 24Hr: " + coinData.getChangePercent24Hr());
+            System.out.println("Market Cap (USD): " + PRICE_FORMAT.format(Double.parseDouble(coinData.getMarketCapUsd())));
+            System.out.println("Volume USD 24Hr: " + PRICE_FORMAT.format(Double.parseDouble(coinData.getVolumeUsd24Hr())));
+
+            double percentChange = Double.parseDouble(coinData.getChangePercent24Hr());
+            String percentChangeFormatted = PERCENT_FORMAT.format(percentChange);
+            String sign = percentChange > 0 ? "+" : ""; // Check if the percentage change is positive or negative
+            System.out.println("Changed Percent 24Hr: " + sign + percentChangeFormatted);
         } else {
             System.out.println("Invalid coin type or symbol.");
             startMenu();
