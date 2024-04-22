@@ -15,5 +15,8 @@
 - [x] Display Changed Percent/24Hr
 
 ### To Do:
+-[] Fix market cap formatting
+-[] Fix volume USD formatting
+-[] add % to 24hr change format
 
  
