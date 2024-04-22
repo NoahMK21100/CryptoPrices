@@ -21,10 +21,15 @@ public class CryptoAPI {
     -handles exceptions that can occur during requests
      */
 
+
+    // HTTP client to send requests
     private static final HttpClient HTTP_CLIENT = HttpClient.newHttpClient(); // Creates new instance of httpclient
+    // Base URL of the CoinCap API
     private static final String COINCAP_ASSESTS_BASE_API = "https://api.coincap.io/v2/assets?";
+    // ObjectMapper to parse JSON responses
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
-    private static final DecimalFormat PRICE_FORMAT = new DecimalFormat("$0,000.00");
+
+    private static final DecimalFormat PRICE_FORMAT = new DecimalFormat("$#,##0.00");   // Added a comma to the price formatting
     public static final List<String> ALL_COIN_TYPES = Arrays.asList(
             "bitcoin",
             "ethereum",
@@ -50,20 +55,31 @@ public class CryptoAPI {
 
     public CoinData getCoinData(String coinType) {
         try {
+            // Construct search query
             String searchQuery = "search=" + coinType;
             String limitQuery = "limit=1";
             URI uri = new URI(COINCAP_ASSESTS_BASE_API
                     + String.join("&", Arrays.asList(searchQuery, limitQuery)));
+            // Create HTTP request
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(uri)
                     .build();
 
+            // Send HTTP request and get response
             HttpResponse<String> response = HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
 
+            // Parse JSON response into CoinDataList object
             String responseBody = response.body();
-
             CoinDataList coinDataList = OBJECT_MAPPER.readValue(responseBody, CoinDataList.class);
-            return coinDataList.getData().get(0);
+
+            // Get first coin data from the list
+            CoinData coinData = coinDataList.getData().get(0);
+
+            // Format price using PRICE_FORMAT
+            String formattedPrice = PRICE_FORMAT.format(Double.parseDouble(coinData.getPriceUsd()));
+            coinData.setPriceUsd(formattedPrice);
+
+            return coinData;
 
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -72,20 +88,31 @@ public class CryptoAPI {
 
     public CoinData getCoinDataBySymbol(String symbol) {
         try {
+            // Construct search query
             String searchQuery = "search=" + symbol;
             String limitQuery = "limit=1";
             URI uri = new URI(COINCAP_ASSESTS_BASE_API
                     + String.join("&", Arrays.asList(searchQuery, limitQuery)));
+            // Create HTTP request
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(uri)
                     .build();
 
+            // Send HTTP request and get response
             HttpResponse<String> response = HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
 
+            // Parse JSON response into CoinDataList object
             String responseBody = response.body();
-
             CoinDataList coinDataList = OBJECT_MAPPER.readValue(responseBody, CoinDataList.class);
-            return coinDataList.getData().get(0);
+
+            // Get first coin data from the list
+            CoinData coinData = coinDataList.getData().get(0);
+
+            // Format the price using PRICE_FORMAT
+            String formattedPrice = PRICE_FORMAT.format(Double.parseDouble(coinData.getPriceUsd()));
+            coinData.setPriceUsd(formattedPrice);
+
+            return coinData;
 
         } catch (Exception e) {
             throw new RuntimeException(e);
