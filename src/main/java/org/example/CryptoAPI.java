@@ -48,35 +48,48 @@ public class CryptoAPI {
             "litecoin"
     );
 
-    public String getCurrentCoinPrice(String coinType) {
-        // use API to find current price of coin (https://docs.coincap.io/) DONE
-        // parse API response,
-        // get the price formatted as currency string
-        // added MVN dependencies
-
-        try{
-            String searchQuery = "search=" + coinType; // Free Requests with imported API to limit information given
-            String limitQuery = "limit=1";              // Free Requests with imported API to limit information given
+    public CoinData getCoinData(String coinType) {
+        try {
+            String searchQuery = "search=" + coinType;
+            String limitQuery = "limit=1";
             URI uri = new URI(COINCAP_ASSESTS_BASE_API
                     + String.join("&", Arrays.asList(searchQuery, limitQuery)));
-            HttpRequest request = HttpRequest.newBuilder()  // creates new http GET request with URI
+            HttpRequest request = HttpRequest.newBuilder()
                     .uri(uri)
                     .build();
 
-            // sends http request and stores response
             HttpResponse<String> response = HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
 
             String responseBody = response.body();
 
-
-            CoinDataList coinDataList = OBJECT_MAPPER.readValue(responseBody, CoinDataList.class); // reads a value of JSON string ( response body ) and converts it into CoinDataList and creates it
-            CoinData firstCoin = coinDataList.getData().get(0);
-            double priceUsd = Double.parseDouble(firstCoin.getPriceUsd());
-            return PRICE_FORMAT.format(priceUsd); // gets
+            CoinDataList coinDataList = OBJECT_MAPPER.readValue(responseBody, CoinDataList.class);
+            return coinDataList.getData().get(0);
 
         } catch (Exception e) {
-                    // If any exception occurs during the HTTP request, wrap it in a RuntimeException and throw
+            throw new RuntimeException(e);
+        }
+    }
+
+    public CoinData getCoinDataBySymbol(String symbol) {
+        try {
+            String searchQuery = "search=" + symbol;
+            String limitQuery = "limit=1";
+            URI uri = new URI(COINCAP_ASSESTS_BASE_API
+                    + String.join("&", Arrays.asList(searchQuery, limitQuery)));
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(uri)
+                    .build();
+
+            HttpResponse<String> response = HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
+
+            String responseBody = response.body();
+
+            CoinDataList coinDataList = OBJECT_MAPPER.readValue(responseBody, CoinDataList.class);
+            return coinDataList.getData().get(0);
+
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 }
+
