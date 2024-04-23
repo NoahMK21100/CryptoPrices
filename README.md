@@ -13,10 +13,10 @@
 - [x] Display Rankings
 - [x] Display Market cap in USD
 - [x] Display Changed Percent/24Hr
+- [x] Fix market cap formatting
+- [x] Fix volume USD formatting
+- [x] add % to 24hr change format
 
 ### To Do:
-- [ ] Fix market cap formatting
-- [ ] Fix volume USD formatting
-- [ ] add % to 24hr change format
 
  
